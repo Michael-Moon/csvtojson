@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+
+
 import * as XLSX from 'xlsx';
 
 
@@ -10,6 +12,7 @@ import * as XLSX from 'xlsx';
 export class AppComponent {
   title = 'csvtojson';
   convertedJson!: string;
+  toConvertedObj: any;
 
   fileUpload(event: any ){
 
@@ -19,14 +22,17 @@ export class AppComponent {
     fileReader.onload = (e: any) => {
 
       let binaryData = e.target?.result;
-      let workbook = XLSX.read(binaryData, {type: 'binary'});
+      let workbook = XLSX.read(binaryData,  {type: 'binary',cellText:false,cellDates:true});
+
+
       workbook.SheetNames.forEach(sheet => {
-        const data = XLSX.utils.sheet_to_json(workbook.Sheets[sheet]);
+        const data = XLSX.utils.sheet_to_json(workbook.Sheets[sheet], {raw: false, dateNF:'yyyy-mm-dd'});
 
-        this.convertedJson = JSON.stringify(data, undefined, 4);
-        console.log(this.convertedJson);
+        this.convertedJson = JSON.stringify(data, undefined, 5);
+        this.toConvertedObj = JSON.parse(this.convertedJson);
+
       })
-
+      console.log(this.toConvertedObj);
     }
   }
 }
